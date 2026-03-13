@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Novo Empréstimo - Biblioteca</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f4f6f9; }
+        nav { background: #1a3c5e; color: white; padding: 15px 30px; display: flex; align-items: center; justify-content: space-between; }
+        nav h1 { font-size: 20px; }
+        nav a { color: #bdd7ee; text-decoration: none; margin-left: 20px; }
+        .container { max-width: 600px; margin: 40px auto; padding: 0 20px; }
+        h2 { color: #1a3c5e; margin-bottom: 25px; }
+        .form-card { background: white; border-radius: 10px; padding: 35px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        .campo { margin-bottom: 20px; }
+        label { display: block; font-size: 13px; font-weight: bold; color: #333; margin-bottom: 6px; }
+        select { width: 100%; padding: 10px 14px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; background: white; }
+        select:focus { outline: none; border-color: #2e75b6; }
+        .botoes { display: flex; gap: 12px; margin-top: 25px; }
+        .btn { padding: 10px 22px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; text-decoration: none; display: inline-block; }
+        .btn-orange { background: #e67e22; color: white; }
+        .btn-gray { background: #6c757d; color: white; }
+        .btn:hover { opacity: 0.85; }
+        .info { background: #fff3cd; border: 1px solid #ffc107; padding: 12px; border-radius: 6px; font-size: 13px; color: #856404; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+<nav>
+    <h1>📚 Biblioteca Online</h1>
+    <div>
+        <a th:href="@{/}">Dashboard</a>
+        <a th:href="@{/emprestimos}">Empréstimos</a>
+    </div>
+</nav>
+
+<div class="container">
+    <h2>🔄 Novo Empréstimo</h2>
+
+    <div class="info">
+        ℹ️ O prazo de devolução é automaticamente definido para <strong>14 dias</strong> a partir da data de hoje.
+    </div>
+
+    <div class="form-card">
+        <form th:action="@{/emprestimos/emprestar}" method="post">
+
+            <div class="campo">
+                <label>Livro Disponível *</label>
+                <select name="livroId" required>
+                    <option value="">-- Seleccionar Livro --</option>
+                    <option th:each="livro : ${livros}"
+                            th:value="${livro.id}"
+                            th:text="${livro.titulo} + ' — ' + ${livro.autor}">
+                    </option>
+                </select>
+            </div>
+
+            <div class="campo">
+                <label>Utilizador *</label>
+                <select name="utilizadorId" required>
+                    <option value="">-- Seleccionar Utilizador --</option>
+                    <option th:each="u : ${utilizadores}"
+                            th:value="${u.id}"
+                            th:text="${u.nome} + ' (' + ${u.email} + ')'">
+                    </option>
+                </select>
+            </div>
+
+            <div class="botoes">
+                <button type="submit" class="btn btn-orange">✅ Registar Empréstimo</button>
+                <a th:href="@{/emprestimos}" class="btn btn-gray">✖ Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

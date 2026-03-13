@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Utilizadores - Biblioteca</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f4f6f9; }
+        nav { background: #1a3c5e; color: white; padding: 15px 30px; display: flex; align-items: center; justify-content: space-between; }
+        nav h1 { font-size: 20px; }
+        nav a { color: #bdd7ee; text-decoration: none; margin-left: 20px; font-size: 14px; }
+        .container { max-width: 1100px; margin: 30px auto; padding: 0 20px; }
+        h2 { color: #1a3c5e; margin-bottom: 20px; }
+        .alerta { padding: 12px 18px; border-radius: 6px; margin-bottom: 20px; background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        th { background: #1a3c5e; color: white; padding: 12px 15px; text-align: left; font-size: 13px; }
+        td { padding: 11px 15px; border-bottom: 1px solid #eee; font-size: 14px; }
+        tr:hover td { background: #f0f7ff; }
+        .badge { padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+        .badge-admin { background: #f8d7da; color: #721c24; }
+        .badge-bib { background: #cce5ff; color: #004085; }
+        .badge-cli { background: #d4edda; color: #155724; }
+        .badge-on { background: #d4edda; color: #155724; }
+        .badge-off { background: #e2e3e5; color: #383d41; }
+        .btn { display: inline-block; padding: 5px 12px; border: none; border-radius: 5px; font-size: 12px; cursor: pointer; text-decoration: none; }
+        .btn-red { background: #dc3545; color: white; }
+        .btn-warn { background: #ffc107; color: #333; }
+        .btn-blue { background: #2e75b6; color: white; }
+        select { padding: 5px 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 12px; }
+    </style>
+</head>
+<body>
+<nav>
+    <h1>📚 Biblioteca Online</h1>
+    <div>
+        <a th:href="@{/}">Dashboard</a>
+        <a th:href="@{/livros}">Livros</a>
+        <a th:href="@{/utilizadores}">Utilizadores</a>
+        <a th:href="@{/emprestimos}">Empréstimos</a>
+        <a th:href="@{/auth/logout}">Sair</a>
+    </div>
+</nav>
+<div class="container">
+    <h2>👥 Gestão de Utilizadores</h2>
+    <div th:if="${sucesso}" class="alerta" th:text="${sucesso}"></div>
+    <table>
+        <thead>
+        <tr>
+            <th>#</th><th>Nome</th><th>Email</th><th>Telefone</th><th>Função</th><th>Estado</th><th>Acções</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="u : ${utilizadores}">
+            <td th:text="${u.id}"></td>
+            <td th:text="${u.nome}"></td>
+            <td th:text="${u.email}"></td>
+            <td th:text="${u.telefone != null} ? ${u.telefone} : '—'"></td>
+            <td>
+                <span th:if="${u.role.name() == 'ADMIN'}" class="badge badge-admin">ADMIN</span>
+                <span th:if="${u.role.name() == 'BIBLIOTECARIO'}" class="badge badge-bib">BIBLIOTECÁRIO</span>
+                <span th:if="${u.role.name() == 'CLIENTE'}" class="badge badge-cli">CLIENTE</span>
+            </td>
+            <td>
+                <span th:if="${u.activo}" class="badge badge-on">Activo</span>
+                <span th:unless="${u.activo}" class="badge badge-off">Inactivo</span>
+            </td>
+            <td>
+                <form th:action="@{/utilizadores/role/{id}(id=${u.id})}" method="post" style="display:inline;">
+                    <select name="role">
+                        <option th:each="r : ${roles}" th:value="${r}" th:text="${r}" th:selected="${r == u.role}"></option>
+                    </select>
+                    <button type="submit" class="btn btn-blue">✔</button>
+                </form>
+                <a th:href="@{/utilizadores/toggle/{id}(id=${u.id})}" class="btn btn-warn"
+                   th:text="${u.activo} ? '🔒 Bloquear' : '🔓 Activar'"></a>
+                <a th:href="@{/utilizadores/eliminar/{id}(id=${u.id})}" class="btn btn-red"
+                   onclick="return confirm('Eliminar utilizador?')">🗑️</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

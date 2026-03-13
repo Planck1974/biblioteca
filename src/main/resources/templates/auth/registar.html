@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Registar - Biblioteca</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #1a3c5e; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .card { background: white; border-radius: 12px; padding: 45px 40px; width: 100%; max-width: 460px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+        .logo { text-align: center; margin-bottom: 30px; }
+        .logo h1 { font-size: 24px; color: #1a3c5e; }
+        .logo p { color: #888; font-size: 14px; margin-top: 5px; }
+        .campo { margin-bottom: 16px; }
+        label { display: block; font-size: 13px; font-weight: bold; color: #333; margin-bottom: 5px; }
+        input { width: 100%; padding: 11px 14px; border: 1px solid #ddd; border-radius: 7px; font-size: 14px; }
+        input:focus { outline: none; border-color: #2e75b6; }
+        .erro { color: #dc3545; font-size: 12px; margin-top: 3px; }
+        .btn { width: 100%; padding: 12px; background: #28a745; color: white; border: none; border-radius: 7px; font-size: 15px; cursor: pointer; margin-top: 8px; font-weight: bold; }
+        .btn:hover { background: #1e7e34; }
+        .alerta { padding: 11px 15px; border-radius: 7px; margin-bottom: 18px; font-size: 13px; }
+        .alerta-erro { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .rodape { text-align: center; margin-top: 20px; font-size: 13px; color: #666; }
+        .rodape a { color: #2e75b6; text-decoration: none; font-weight: bold; }
+        .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    </style>
+</head>
+<body>
+<div class="card">
+    <div class="logo">
+        <h1>📚 Criar Conta</h1>
+        <p>Registe-se para aceder à biblioteca</p>
+    </div>
+
+    <div th:if="${erro}" class="alerta alerta-erro" th:text="${erro}"></div>
+
+    <form th:action="@{/auth/registar}" th:object="${usuario}" method="post">
+
+        <div class="campo">
+            <label>Nome Completo *</label>
+            <input type="text" th:field="*{nome}" placeholder="Ex: João Silva" required/>
+            <div class="erro" th:errors="*{nome}"></div>
+        </div>
+
+        <div class="campo">
+            <label>Email *</label>
+            <input type="email" th:field="*{email}" placeholder="email@exemplo.com" required/>
+            <div class="erro" th:errors="*{email}"></div>
+        </div>
+
+        <div class="campo">
+            <label>Telefone</label>
+            <input type="text" th:field="*{telefone}" placeholder="+258 84 000 0000"/>
+        </div>
+
+        <div class="campo">
+            <label>Password *</label>
+            <input type="password" th:field="*{password}" placeholder="Mínimo 6 caracteres" required/>
+            <div class="erro" th:errors="*{password}"></div>
+        </div>
+
+        <button type="submit" class="btn">✅ Criar Conta</button>
+    </form>
+
+    <div class="rodape">
+        Já tem conta? <a th:href="@{/auth/login}">Fazer login</a>
+    </div>
+</div>
+</body>
+</html>

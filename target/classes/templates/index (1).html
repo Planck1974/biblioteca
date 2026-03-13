@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Biblioteca Online</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f4f6f9; }
+        nav { background: #1a3c5e; color: white; padding: 15px 30px; display: flex; align-items: center; justify-content: space-between; }
+        nav h1 { font-size: 20px; }
+        nav a { color: #bdd7ee; text-decoration: none; margin-left: 20px; font-size: 14px; }
+        nav a:hover { color: white; }
+        .container { max-width: 1100px; margin: 30px auto; padding: 0 20px; }
+        h2 { color: #1a3c5e; margin-bottom: 25px; }
+        .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 40px; }
+        .cards-admin { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 40px; }
+        .card { background: white; border-radius: 10px; padding: 25px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border-top: 4px solid #2e75b6; }
+        .card .numero { font-size: 42px; font-weight: bold; color: #2e75b6; }
+        .card .label { color: #666; margin-top: 8px; font-size: 14px; }
+        .acoes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .acoes-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+        .acao { background: white; border-radius: 10px; padding: 25px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        .acao h3 { color: #1a3c5e; margin-bottom: 10px; }
+        .acao p { color: #666; font-size: 13px; margin-bottom: 15px; }
+        .btn { display: inline-block; padding: 10px 20px; background: #2e75b6; color: white; border-radius: 6px; text-decoration: none; font-size: 14px; }
+        .btn:hover { background: #1a3c5e; }
+        .btn-green { background: #28a745; }
+        .btn-green:hover { background: #1e7e34; }
+        .btn-orange { background: #e67e22; }
+        .btn-orange:hover { background: #ca6f1e; }
+        .btn-sair { background: #e74c3c; color: white; padding: 8px 16px; border-radius: 6px; font-size: 14px; margin-left: 20px; text-decoration: none; }
+        .btn-sair:hover { background: #c0392b; color: white; }
+    </style>
+</head>
+<body>
+<nav>
+    <h1>📚 Biblioteca Online</h1>
+    <div>
+        <a th:href="@{/livros}">Livros</a>
+        <a sec:authorize="hasRole('ADMIN')" th:href="@{/utilizadores}">Utilizadores</a>
+        <a th:href="@{/emprestimos}">Empréstimos</a>
+        <a href="/logout" class="btn-sair">🚪 Sair</a>
+    </div>
+</nav>
+
+<div class="container">
+    <h2>Dashboard</h2>
+
+    <!-- Estatísticas ADMIN -->
+    <div sec:authorize="hasRole('ADMIN')" class="cards-admin">
+        <div class="card">
+            <div class="numero" th:text="${totalLivros}">0</div>
+            <div class="label">Total de Livros</div>
+        </div>
+        <div class="card">
+            <div class="numero" th:text="${livrosDisponiveis}">0</div>
+            <div class="label">Livros Disponíveis</div>
+        </div>
+        <div class="card">
+            <div class="numero" th:text="${totalUtilizadores}">0</div>
+            <div class="label">Utilizadores</div>
+        </div>
+        <div class="card">
+            <div class="numero" th:text="${emprestimosActivos}">0</div>
+            <div class="label">Empréstimos Activos</div>
+        </div>
+    </div>
+
+    <!-- Estatísticas outros utilizadores -->
+    <div sec:authorize="!hasRole('ADMIN')" class="cards">
+        <div class="card">
+            <div class="numero" th:text="${totalLivros}">0</div>
+            <div class="label">Total de Livros</div>
+        </div>
+        <div class="card">
+            <div class="numero" th:text="${livrosDisponiveis}">0</div>
+            <div class="label">Livros Disponíveis</div>
+        </div>
+        <div class="card">
+            <div class="numero" th:text="${emprestimosActivos}">0</div>
+            <div class="label">Empréstimos Activos</div>
+        </div>
+    </div>
+
+    <!-- Acções rápidas — ADMIN vê tudo -->
+    <h2>Acções Rápidas</h2>
+    <div sec:authorize="hasRole('ADMIN')" class="acoes">
+        <div class="acao">
+            <h3>📖 Livros</h3>
+            <p>Gerir o catálogo de livros da biblioteca</p>
+            <a th:href="@{/livros}" class="btn">Ver Livros</a>
+            <a th:href="@{/livros/novo}" class="btn btn-green" style="margin-top:8px; display:block;">+ Novo Livro</a>
+        </div>
+        <div class="acao">
+            <h3>👤 Utilizadores</h3>
+            <p>Gerir os utilizadores registados</p>
+            <a th:href="@{/utilizadores}" class="btn">Ver Utilizadores</a>
+            <a th:href="@{/utilizadores/novo}" class="btn btn-green" style="margin-top:8px; display:block;">+ Novo Utilizador</a>
+        </div>
+        <div class="acao">
+            <h3>🔄 Empréstimos</h3>
+            <p>Registar empréstimos e devoluções</p>
+            <a th:href="@{/emprestimos}" class="btn">Ver Empréstimos</a>
+            <a th:href="@{/emprestimos/novo}" class="btn btn-orange" style="margin-top:8px; display:block;">+ Novo Empréstimo</a>
+        </div>
+    </div>
+
+    <!-- Acções rápidas — outros utilizadores vêem só Livros e Empréstimos -->
+    <div sec:authorize="!hasRole('ADMIN')" class="acoes-2">
+        <div class="acao">
+            <h3>📖 Livros</h3>
+            <p>Consultar o catálogo de livros disponíveis</p>
+            <a th:href="@{/livros}" class="btn">Ver Livros</a>
+        </div>
+        <div class="acao">
+            <h3>🔄 Empréstimos</h3>
+            <p>Ver os meus empréstimos e devolver livros</p>
+            <a th:href="@{/emprestimos}" class="btn">Ver Empréstimos</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

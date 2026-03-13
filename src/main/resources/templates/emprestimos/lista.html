@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Empréstimos - Biblioteca</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f4f6f9; }
+        nav { background: #1a3c5e; color: white; padding: 15px 30px; display: flex; align-items: center; justify-content: space-between; }
+        nav h1 { font-size: 20px; }
+        nav a { color: #bdd7ee; text-decoration: none; margin-left: 20px; }
+        .btn-sair { background: #e74c3c; color: white; padding: 8px 16px; border-radius: 6px; font-size: 14px; margin-left: 20px; text-decoration: none; }
+        .container { max-width: 1100px; margin: 30px auto; padding: 0 20px; }
+        .topo { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        h2 { color: #1a3c5e; }
+        .btn { display: inline-block; padding: 9px 18px; background: #2e75b6; color: white; border-radius: 6px; text-decoration: none; font-size: 14px; }
+        .btn-orange { background: #e67e22; }
+        .btn-green { background: #28a745; }
+        .alerta { padding: 12px 18px; border-radius: 6px; margin-bottom: 20px; }
+        .alerta-sucesso { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .alerta-erro { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        th { background: #1a3c5e; color: white; padding: 12px 15px; text-align: left; font-size: 13px; }
+        td { padding: 12px 15px; border-bottom: 1px solid #eee; font-size: 14px; color: #333; }
+        tr:hover td { background: #f0f7ff; }
+        .badge { padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+        .badge-blue { background: #cce5ff; color: #004085; }
+        .badge-green { background: #d4edda; color: #155724; }
+        .badge-red { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+<nav>
+    <h1>📚 Biblioteca Online</h1>
+    <div>
+        <a th:href="@{/}">Dashboard</a>
+        <a th:href="@{/livros}">Livros</a>
+        <a sec:authorize="hasRole('ADMIN')" th:href="@{/utilizadores}">Utilizadores</a>
+        <a th:href="@{/emprestimos}">Empréstimos</a>
+        <a href="/logout" class="btn-sair">🚪 Sair</a>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="topo">
+        <h2>🔄 Empréstimos e Devoluções</h2>
+        <a sec:authorize="hasRole('ADMIN')" th:href="@{/emprestimos/novo}" class="btn btn-orange">+ Novo Empréstimo</a>
+    </div>
+
+    <div th:if="${sucesso}" class="alerta alerta-sucesso" th:text="${sucesso}"></div>
+    <div th:if="${erro}" class="alerta alerta-erro" th:text="${erro}"></div>
+
+    <table>
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Livro</th>
+            <th>Utilizador</th>
+            <th>Data Empréstimo</th>
+            <th>Devolução Prevista</th>
+            <th>Devolução Real</th>
+            <th>Estado</th>
+            <th>Acção</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="e : ${emprestimos}">
+            <td th:text="${e.id}"></td>
+            <td th:text="${e.livro.titulo}"></td>
+            <td th:text="${e.usuario.nome}"></td>
+            <td th:text="${e.dataEmprestimo}"></td>
+            <td th:text="${e.dataDevolucaoPrevista}"></td>
+            <td th:text="${e.dataDevolucaoReal != null} ? ${e.dataDevolucaoReal} : '—'"></td>
+            <td>
+                <span th:if="${e.status.name() == 'ACTIVO'}" class="badge badge-blue">Activo</span>
+                <span th:if="${e.status.name() == 'DEVOLVIDO'}" class="badge badge-green">Devolvido</span>
+                <span th:if="${e.status.name() == 'ATRASADO'}" class="badge badge-red">Atrasado</span>
+            </td>
+            <td>
+                <a th:if="${e.status.name() == 'ACTIVO'}"
+                   th:href="@{/emprestimos/devolver/{id}(id=${e.id})}"
+                   class="btn btn-green" style="padding:5px 12px; font-size:12px;"
+                   onclick="return confirm('Confirmar devolução?')">✅ Devolver</a>
+                <span th:unless="${e.status.name() == 'ACTIVO'}" style="color:#999; font-size:12px;">—</span>
+            </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(emprestimos)}">
+            <td colspan="8" style="text-align:center; padding:30px; color:#999;">Nenhum empréstimo registado.</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
