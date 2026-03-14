@@ -28,15 +28,21 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/**", "/h2-console/**", "/css/**").permitAll()
+                // LIBERADO: Login, Registro, H2 e Arquivos Estáticos (CSS/JS)
+                .requestMatchers("/auth/**", "/registrar", "/h2-console/**", "/css/**", "/js/**", "/images/**").permitAll()
+                
+                // RESTRITO: Apenas ADMIN pode gerir utilizadores
                 .requestMatchers("/utilizadores/**").hasRole("ADMIN")
+                
+                // RESTRITO: Páginas principais do sistema
                 .requestMatchers("/livros/**", "/emprestimos/**").hasAnyRole("ADMIN", "PROFESSOR", "ESTUDANTE", "VISITANTE")
+                
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
                 .loginPage("/auth/login")
                 .loginProcessingUrl("/auth/login")
-                .defaultSuccessUrl("/", true)
+                .defaultSuccessUrl("/", true) // Tenta ir para a home após logar
                 .failureUrl("/auth/login?erro=true")
                 .permitAll()
             )
@@ -50,7 +56,7 @@ public class SecurityConfig {
                 .permitAll()
             )
             .csrf(csrf -> csrf
-                .ignoringRequestMatchers("/h2-console/**")
+                .ignoringRequestMatchers("/h2-console/**", "/registrar") // Ignora CSRF no registro para evitar erros de token
             )
             .headers(headers -> headers
                 .frameOptions(frame -> frame.sameOrigin())
@@ -64,7 +70,7 @@ public class SecurityConfig {
         AuthenticationManagerBuilder builder =
                 http.getSharedObject(AuthenticationManagerBuilder.class);
         builder.userDetailsService(userDetailsService)
-               .passwordEncoder(passwordEncoder());
+                .passwordEncoder(passwordEncoder());
         return builder.build();
     }
 }

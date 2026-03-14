@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Biblioteca - Criar Conta</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f6f9; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .card { background: white; padding: 40px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 350px; text-align: center; }
+        h2 { color: #1a3c5e; margin-bottom: 20px; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 6px; }
+        .btn { width: 100%; padding: 12px; background: #2e75b6; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; }
+        .btn:hover { background: #1a3c5e; }
+        a { color: #2e75b6; text-decoration: none; font-size: 14px; display: block; margin-top: 15px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>Criar Conta</h2>
+        <form th:action="@{/registrar}" th:object="${usuario}" method="post">
+            <input type="email" th:field="*{email}" placeholder="Seu melhor e-mail" required>
+            <input type="password" th:field="*{senha}" placeholder="Crie uma senha" required>
+            <button type="submit" class="btn">Cadastrar Agora →</button>
+        </form>
+        <a href="/auth/login">Já tem conta? Faça Login</a>
+    </div>
+</body>
+</html>
