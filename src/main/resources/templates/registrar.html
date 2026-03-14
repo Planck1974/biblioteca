@@ -2,26 +2,34 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="pt">
 <head>
     <meta charset="UTF-8">
-    <title>Biblioteca - Criar Conta</title>
+    <title>Biblioteca - Registro</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #f4f6f9; display: flex; justify-content: center; align-items: center; height: 100vh; }
-        .card { background: white; padding: 40px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 350px; text-align: center; }
-        h2 { color: #1a3c5e; margin-bottom: 20px; }
-        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 6px; }
-        .btn { width: 100%; padding: 12px; background: #2e75b6; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
+        h2 { color: #1a3c5e; margin-bottom: 10px; }
+        p { color: #666; margin-bottom: 25px; font-size: 14px; }
+        input { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        .btn { width: 100%; padding: 14px; background: #2e75b6; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: bold; transition: 0.3s; }
         .btn:hover { background: #1a3c5e; }
-        a { color: #2e75b6; text-decoration: none; font-size: 14px; display: block; margin-top: 15px; }
+        .alert { padding: 10px; margin-bottom: 15px; border-radius: 6px; font-size: 13px; }
+        .alert-error { background: #f8d7da; color: #721c24; }
+        a { color: #2e75b6; text-decoration: none; font-size: 14px; display: block; margin-top: 20px; }
     </style>
 </head>
 <body>
     <div class="card">
         <h2>Criar Conta</h2>
+        <p>Acesse o Sistema de Gestão de Biblioteca</p>
+
+        <div th:if="${erro}" class="alert alert-error" th:text="${erro}"></div>
+
         <form th:action="@{/registrar}" th:object="${usuario}" method="post">
-            <input type="email" th:field="*{email}" placeholder="Seu melhor e-mail" required>
-            <input type="password" th:field="*{senha}" placeholder="Crie uma senha" required>
-            <button type="submit" class="btn">Cadastrar Agora →</button>
+            <input type="email" th:field="*{email}" placeholder="E-mail" required>
+            <input type="password" th:field="*{senha}" placeholder="Senha" required>
+            <button type="submit" class="btn">Cadastrar →</button>
         </form>
-        <a href="/auth/login">Já tem conta? Faça Login</a>
+
+        <a href="/auth/login">Já tem uma conta? Voltar ao Login</a>
     </div>
 </body>
 </html>

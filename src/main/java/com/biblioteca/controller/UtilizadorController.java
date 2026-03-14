@@ -14,36 +14,43 @@ public class UtilizadorController {
     @Autowired
     private UsuarioService usuarioService;
 
-    // Listagem (Acesso: /utilizadores)
+    // Listagem de utilizadores - Acessível em /utilizadores
     @GetMapping("/utilizadores")
     public String listar(Model model) {
-        model.addAttribute("utilizadores", usuarioService.listarTodos());
-        model.addAttribute("roles", Usuario.Role.values());
+        try {
+            model.addAttribute("utilizadores", usuarioService.listarTodos());
+            model.addAttribute("roles", Usuario.Role.values());
+        } catch (Exception e) {
+            model.addAttribute("erro", "Erro ao carregar lista: " + e.getMessage());
+        }
         return "utilizadores/lista";
     }
 
-    // --- MÉTODOS DE REGISTRO (Acesso: /registrar) ---
+    // Exibir página de registro - Acessível em /registrar
     @GetMapping("/registrar")
     public String mostrarPaginaRegistro(Model model) {
-        model.addAttribute("usuario", new Usuario()); 
+        if (!model.containsAttribute("usuario")) {
+            model.addAttribute("usuario", new Usuario());
+        }
         return "registrar"; 
     }
 
+    // Processar o formulário de registro
     @PostMapping("/registrar")
     public String realizarRegistro(@ModelAttribute("usuario") Usuario usuario, RedirectAttributes attrs) {
         try {
-            // Usando o service para garantir que a senha seja tratada corretamente
+            // Tenta salvar o usuário usando o Service
             usuarioService.salvar(usuario); 
-            attrs.addFlashAttribute("sucesso", "Cadastro realizado! Faça login.");
-            return "redirect:/login";
+            attrs.addFlashAttribute("sucesso", "Cadastro realizado com sucesso! Faça o login.");
+            return "redirect:/auth/login";
         } catch (Exception e) {
             attrs.addFlashAttribute("erro", "Erro ao cadastrar: " + e.getMessage());
+            attrs.addFlashAttribute("usuario", usuario);
             return "redirect:/registrar";
         }
     }
 
-    // --- OUTROS MÉTODOS (Tirei o /utilizadores do Mapping e coloquei no link) ---
-
+    // Outras ações de Admin
     @PostMapping("/utilizadores/role/{id}")
     public String alterarRole(@PathVariable Long id, @RequestParam Usuario.Role role, RedirectAttributes attrs) {
         usuarioService.alterarRole(id, role);
