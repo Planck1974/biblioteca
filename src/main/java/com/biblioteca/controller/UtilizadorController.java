@@ -14,7 +14,7 @@ public class UtilizadorController {
     @Autowired
     private UsuarioService usuarioService;
 
-    // Listagem - Usa 'listarTodos' conforme seu Service
+    // Listagem - Usando listarTodos() do seu Service
     @GetMapping("/utilizadores")
     public String listar(Model model) {
         model.addAttribute("utilizadores", usuarioService.listarTodos());
@@ -22,16 +22,18 @@ public class UtilizadorController {
         return "utilizadores/lista";
     }
 
+    // Exibir página de registro
     @GetMapping("/registrar")
     public String mostrarPaginaRegistro(Model model) {
         model.addAttribute("usuario", new Usuario());
         return "registrar"; 
     }
 
+    // Processar o formulário de registro
     @PostMapping("/registrar")
     public String realizarRegistro(@ModelAttribute("usuario") Usuario usuario, RedirectAttributes attrs) {
         try {
-            // AJUSTADO: Agora chama 'registar' com 'a', igual ao seu Service!
+            // CORREÇÃO AQUI: Mudado de 'save' para 'registar' (igual ao seu Service)
             usuarioService.registar(usuario); 
             
             attrs.addFlashAttribute("sucesso", "Conta criada com sucesso! Faça login.");
@@ -42,7 +44,6 @@ public class UtilizadorController {
         }
     }
 
-    // Outros métodos usando os nomes corretos do seu Service
     @PostMapping("/utilizadores/role/{id}")
     public String alterarRole(@PathVariable Long id, @RequestParam Usuario.Role role) {
         usuarioService.alterarRole(id, role);
