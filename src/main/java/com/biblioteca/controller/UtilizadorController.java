@@ -14,9 +14,9 @@ public class UtilizadorController {
     @Autowired
     private UsuarioService usuarioService;
 
+    // Listagem - Usa 'listarTodos' conforme seu Service
     @GetMapping("/utilizadores")
     public String listar(Model model) {
-        // CONFIRA: No seu Service é 'listarTodos' ou 'findAll'?
         model.addAttribute("utilizadores", usuarioService.listarTodos());
         model.addAttribute("roles", Usuario.Role.values());
         return "utilizadores/lista";
@@ -31,15 +31,33 @@ public class UtilizadorController {
     @PostMapping("/registrar")
     public String realizarRegistro(@ModelAttribute("usuario") Usuario usuario, RedirectAttributes attrs) {
         try {
-            // CONFIRA: No seu Service é 'salvar' ou 'save'? 
-            // Se o build falhou, mude 'salvar' para 'save' aqui embaixo:
-            usuarioService.save(usuario); 
+            // AJUSTADO: Agora chama 'registar' com 'a', igual ao seu Service!
+            usuarioService.registar(usuario); 
             
-            attrs.addFlashAttribute("sucesso", "Conta criada!");
+            attrs.addFlashAttribute("sucesso", "Conta criada com sucesso! Faça login.");
             return "redirect:/auth/login";
         } catch (Exception e) {
             attrs.addFlashAttribute("erro", "Erro: " + e.getMessage());
             return "redirect:/registrar";
         }
+    }
+
+    // Outros métodos usando os nomes corretos do seu Service
+    @PostMapping("/utilizadores/role/{id}")
+    public String alterarRole(@PathVariable Long id, @RequestParam Usuario.Role role) {
+        usuarioService.alterarRole(id, role);
+        return "redirect:/utilizadores";
+    }
+
+    @GetMapping("/utilizadores/toggle/{id}")
+    public String toggleActivo(@PathVariable Long id) {
+        usuarioService.activarDesactivar(id);
+        return "redirect:/utilizadores";
+    }
+
+    @GetMapping("/utilizadores/eliminar/{id}")
+    public String eliminar(@PathVariable Long id) {
+        usuarioService.eliminar(id);
+        return "redirect:/utilizadores";
     }
 }
