@@ -33,7 +33,7 @@ public class UtilizadorController {
         try {
             // CONFIRA: No seu Service é 'salvar' ou 'save'? 
             // Se o build falhou, mude 'salvar' para 'save' aqui embaixo:
-            usuarioService.salvar(usuario); 
+            usuarioService.save(usuario); 
             
             attrs.addFlashAttribute("sucesso", "Conta criada!");
             return "redirect:/auth/login";
