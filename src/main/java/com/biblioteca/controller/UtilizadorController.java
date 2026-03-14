@@ -61,4 +61,4 @@ public class UtilizadorController {
         usuarioService.eliminar(id);
         return "redirect:/utilizadores";
     }
-}
+} 
